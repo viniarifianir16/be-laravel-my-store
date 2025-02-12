@@ -4,7 +4,11 @@ use App\Http\Controllers\BarangController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware('api')->group(function () {
+Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+    return response()->json($request->user());
+});
+
+Route::middleware('auth:sanctum')->group(function () {
     // BARANG
     Route::get('barang', [BarangController::class, 'index']);
     Route::get('barang/{id}', [BarangController::class, 'show']);
