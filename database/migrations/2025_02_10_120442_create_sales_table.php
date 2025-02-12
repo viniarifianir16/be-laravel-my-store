@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('t_sales', function (Blueprint $table) {
+        Schema::create('sales', function (Blueprint $table) {
             $table->id();
-            $table->string('kode', 15);
+            $table->string('kode', 15)->unique();
             $table->dateTime('tgl');
             $table->integer('cust_id');
             $table->decimal('subtotal')->nullable();
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('t_sales');
+        Schema::dropIfExists('sales');
     }
 };

@@ -9,6 +9,7 @@ class SalesDet extends Model
 {
     use HasFactory;
 
+    protected $table = 'sales_det';
     protected $fillable = [
         'kode',
         'sales_id',
