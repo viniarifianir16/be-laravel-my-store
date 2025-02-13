@@ -15,11 +15,14 @@ return new class extends Migration
             $table->id();
             $table->string('kode', 15)->unique();
             $table->dateTime('tgl');
-            $table->integer('cust_id');
+            $table->integer('cust_id')->unsigned();
             $table->decimal('subtotal')->nullable();
             $table->decimal('diskon')->default('0');
             $table->decimal('ongkir');
             $table->decimal('total_bayar')->nullable();
+
+            $table->foreign('cust_id')->references('id')->on('customer')->onDelete('cascade');
+
             $table->timestamps();
         });
     }

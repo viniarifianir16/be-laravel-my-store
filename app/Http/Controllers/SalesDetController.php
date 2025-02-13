@@ -28,6 +28,10 @@ class SalesDetController extends Controller
 
         $salesDet = SalesDet::create($request->all());
 
+        // foreach ($request->details as $salesDet) {
+        //     SalesDet::create($salesDet);
+        // }
+
         return response()->json($salesDet, 201);
     }
 

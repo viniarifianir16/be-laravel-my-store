@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Customer;
 use App\Models\Sales;
+use Illuminate\Support\Facades\DB;
 
 class SalesController extends Controller
 {
@@ -12,6 +13,34 @@ class SalesController extends Controller
     {
         $sales = Sales::all();
         return response()->json($sales);
+    }
+
+    public function getLastAutoIncrementValue()
+    {
+        $lastSalesID = Sales::max('id');
+
+        return response()->json(['lastSalesID' => $lastSalesID]);
+    }
+
+    public function salesReport()
+    {
+        $salesDetReport = Sales::join('sales_det', 'sales.id', '=', 'sales_det.sales_id')
+            ->join('customer', 'sales.cust_id', '=', 'customer.id')
+            ->select(
+                'customer.name',
+                'sales.id',
+                'sales.kode',
+                'sales.tgl',
+                'sales.cust_id',
+                'sales.subtotal',
+                'sales.diskon',
+                'sales.ongkir',
+                'sales.total_bayar',
+                Sales::raw('COALESCE(SUM(sales_det.qty), 0) AS total_qty')
+            )
+            ->groupBy('sales.id',  'customer.name')
+            ->get();
+        return response()->json($salesDetReport);
     }
 
     public function store(Request $request)
@@ -84,8 +113,24 @@ class SalesController extends Controller
             return response()->json(['error' => 'Sales not found'], 404);
         }
 
-        $sales->delete();
+        try {
+            DB::beginTransaction();
 
-        return response()->json(['message' => 'Sales deleted successfully']);
+            $sales = Sales::find($id);
+            if (!$sales) {
+                return response()->json(['error' => 'Sales not found'], 404);
+            }
+
+            DB::table('sales_det')->where('sales_id', $id)->delete();
+
+            $sales->delete();
+
+            DB::commit();
+
+            return response()->json(['message' => 'Sales and related sales_det deleted successfully']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => 'Failed to delete sales', 'message' => $e->getMessage()], 500);
+        }
     }
 }
