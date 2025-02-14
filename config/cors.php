@@ -15,11 +15,11 @@ return [
     |
     */
 
-    'paths' => ['*', 'api/*', 'sanctum/csrf-cookie'],
+    'paths' => ['*'],
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['https://fe-react-my-store.vercel.app', 'http://localhost:5173', 'https://be-laravel-my-store-production.up.railway.app'],
+    'allowed_origins' => ['https://fe-react-my-store.vercel.app', 'http://localhost:5173'],
 
     'allowed_origins_patterns' => [],
 
